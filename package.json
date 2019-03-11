@@ -1,0 +1,19 @@
+{
+  "name": "sweaterweatherfe",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stoic-plus/sweaterWeatherFE.git"
+  },
+  "author": "Ricardo Ledesma",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stoic-plus/sweaterWeatherFE/issues"
+  },
+  "homepage": "https://github.com/stoic-plus/sweaterWeatherFE#readme"
+}
