@@ -1,0 +1,29 @@
+html {
+  --p-purple: #7A5EC2;
+  --p-pink: #AD9ACF;
+  --p-white: #F9EBFF;
+  --p-green: #00C9A3;
+}
+
+body {
+  width: 100vw;
+}
+
+h1 {
+  padding: 2rem;
+  text-align: center;
+}
+
+li {
+  list-style: none;
+}
+
+a {
+  color: var(--p-white);
+}
+
+.main-links {
+  width: 20vw;
+  padding: 4rem 0rem;
+  margin: 0 auto;
+}
