@@ -18,12 +18,21 @@ li {
   list-style: none;
 }
 
-a {
+p {
+  text-align: center;
+  padding: 1rem;
+}
+
+button > a {
   color: var(--p-white);
 }
 
-.main-links {
+.main-links, .main-form {
   width: 20vw;
   padding: 4rem 0rem;
   margin: 0 auto;
+}
+
+.main-form > input {
+  margin: .5rem;
 }
