@@ -210,6 +210,20 @@ const states = [
 let forecast;
 let weatherData;
 
+function getIcon(summary) {
+  if (/rain/gi.test(summary)) {
+    return `<i class="fas fa-cloud-showers-heavy"></i>`;
+  }
+  if (/partly.*cloudy/gi.test(summary)) {
+    return `<i class="fas fa-cloud-sun"></i>`;
+  }
+  if (/cloudy/gi.test(summary)) {
+    return `<i class="fas fa-cloud"></i>`;
+  } else {
+    return `<i class="far fa-sun"></i>`;
+  }
+}
+
 class Forecast {
   constructor(location, attributes) {
     this.location = location;
@@ -224,7 +238,7 @@ class Forecast {
     this.daily = attributes.daily_forecast;
   }
 
-  showCurrent() {
+  makeCurrent() {
     return `
     <div class="current-weather">
       <p class="weather-main">${location} Weather</p>

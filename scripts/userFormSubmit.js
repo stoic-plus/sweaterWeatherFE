@@ -1,4 +1,5 @@
 const userForm = document.getElementById('user-form');
+let userData;
 
 userForm.addEventListener('submit', function(e) {
   e.preventDefault();
@@ -10,7 +11,8 @@ userForm.addEventListener('submit', function(e) {
     return response.json();
   })
   .then(data => {
-      console.log(data);
+      userData = data;
+      console.log(data.data);
   })
   .catch(error => {
     console.error(error);
