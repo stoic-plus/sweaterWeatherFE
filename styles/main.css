@@ -36,3 +36,33 @@ button > a {
 .main-form > input {
   margin: .5rem;
 }
+
+.forecast {
+  display: grid;
+}
+
+.current {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.hourly {
+  grid-template-columns: repeat(8, 1fr);
+}
+
+.removed {
+  display: none;
+}
+
+.current-weather {
+  background-color: var(--p-purple);
+  color: var(--p-white);
+  display: flex;
+}
+
+.info-main {
+  font-weight: 800;
+}
+
+.info-sub {
+  font-weight: 500;
+}
