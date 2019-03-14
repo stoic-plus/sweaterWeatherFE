@@ -15,8 +15,8 @@
 
    <nav>
     <li><a href="#">Current</a></li>
-    <li><a href="hourly.html">Hourly</a></li>
-    <li><a href="weekly.html">Weekly</a></li>
+    <li><a href="#">Hourly</a></li>
+    <li><a href="#">Weekly</a></li>
    </nav>
 
    <br />
@@ -28,16 +28,21 @@
      </select>
      <button type="submit" name="button">Submit</button>
    </form>
-   <!-- <section class="forecast">
+   <section id="weather" class="weather">
      <section class="forecast current">
        <div class="current-weather">
-         <p>Denver, CO Weather</p>
-         <p>March 11, 2019</p>
+         <div>
+           <p class="info-main">Denver, CO Weather</p>
+           <p class="info-sub">March 11, 2019</p>
 
-         <p>53</p>
-         <p>Feels like 53</p>
-         <p>30% chance of Rain Showers</p>
-         <p>Hi 53F Lo 30F</p>
+           <p class="info-sub">53</p>
+           <p class="info-sub">Feels like 53</p>
+           <p class="info-sub">Hi 53F Lo 30F</p>
+         </div>
+
+         <div>
+           <p class="info-sub">30% chance of Rain Showers</p>
+         </div>
        </div>
 
        <div class="current-details">
@@ -53,7 +58,7 @@
          <p class="tonight">Some Rain</p>
        </div>
      </section>
-   </section> -->
+   </section>
 
    <script src="scripts/weatherSearch.js"></script>
   </body>
