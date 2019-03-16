@@ -74,10 +74,23 @@ button > a {
   margin: 0 auto;
 }
 
+.daily.summaries > div {
+  margin: 0 26rem;
+}
+
 .weather-icon.summaries, .weather-desc {
   display: flex;
   flex-direction: column;
   padding: 1rem;
+}
+
+.weather-desc.daily {
+  display: flex;
+  flex-direction: column;
+}
+
+.weather-desc.daily > div {
+  display: flex;
 }
 
 .summaries > div {
