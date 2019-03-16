@@ -226,13 +226,18 @@ class Forecast {
     };
     this.hourly = attributes.hourly_forecast;
     this.daily = attributes.daily_forecast;
+    const { day, time, date } = this.getDateTime(this.current.weather.time);
+    this.day = day;
+    this.time = time;
+    this.date = date;
   }
 
-  getTime(timestamp) {
-    const date = new Date(timestamp*1000);
-    const day = date.toDateString();
-    const time = date.toLocaleTimeString();
-    return { day, time };
+  getDateTime(timestamp) {
+    const now = new Date(timestamp*1000);
+    const day = now.toDateString();
+    const date = now.toLocaleDateString();
+    const time = now.toLocaleTimeString();
+    return { day, time, date };
   }
 
   getIcon(summary) {
@@ -243,19 +248,18 @@ class Forecast {
       return `<i class="fas fa-cloud-sun fa-2x"></i>`;
     }
     if (/cloudy/gi.test(summary)) {
-      return `<i class="fas fa-cloud"></i>`;
+      return `<i class="fas fa-cloud fa-2x"></i>`;
     } else {
       return `<i class="fas fa-sun fa-2x"></i>`;
     }
   }
 
   makeCurrent() {
-    const { day, time } = this.getTime(this.current.weather.time);
     return `
     <section class="forecast">
       <div class="current overview">
         <p class="weather-main">${this.location} Weather</p>
-        <p class="weather-main">${day}, ${time}</p>
+        <p class="weather-main">${this.day}, ${this.time}</p>
 
         <div class="weather-icon">
         <h4 class="weather-details">${Math.floor(this.current.weather.temperature)}°</h4>
@@ -313,7 +317,53 @@ class Forecast {
     </section>
     `;
   }
-}
+
+  makeDaily() {
+    const dailyForecast = this.daily.reduce((forecast, dailyWeather, i) => {
+      const { day, time, date } = this.getDateTime(dailyWeather.time);
+      return forecast += `
+      <div class="carousel-item ${i === 0 ? 'active' : ''}">
+        <div class="daily summaries">
+          <p><span class="weather-main">${day.split(" ")[0]}</span> ${date}</p>
+          <p class="weather-main">${dailyWeather.summary}</p>
+          <div>
+            <div class="weather-desc daily">
+              <div>
+                <p class="weather-main">High</p>
+                <p class="weather-main">${Math.floor(dailyWeather.temperatureMax)}°</p>
+              </div>
+              <div>
+                <p class="weather-main">Low</p>
+                <p class="weather-main">${Math.floor(dailyWeather.temperatureMin)}°</p>
+              </div>
+            </div>
+            <div class="weather-icon">
+              ${this.getIcon(dailyWeather.summary)}
+            </div>
+          </div>
+          <p>Chance of ${dailyWeather.precipType}: ${Math.floor(dailyWeather.precipProbability * 100)}%</p>
+        </div>
+      </div>
+      `;
+    }, "");
+    return `
+    <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+      <div class="carousel-inner">
+        ${dailyForecast}
+      </div>
+      <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
+    </div>
+    `
+  };
+ }
+
 
 const forecast = new Forecast("Denver, CO", weatherData);
 //
