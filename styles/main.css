@@ -112,3 +112,20 @@ button > a {
   min-width: 12rem;
   max-width: 16rem;
 }
+
+
+
+/* HOURLY */
+
+.hourly.forecast {
+  display: flex;
+  flex-direction: column;
+}
+
+.weather-icon.hourly {
+  flex-direction: row;
+}
+
+.weather-icon.hourly > i {
+  padding: 3rem;
+}
