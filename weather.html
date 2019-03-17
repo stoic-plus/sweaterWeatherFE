@@ -3,8 +3,10 @@
   <head>
     <meta charset="utf-8">
     <title>Sweater Weather</title>
-    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"> -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/daily.css">
   </head>
   <body>
    <nav class="navbar navbar-expand-lg">
@@ -13,11 +15,11 @@
      <li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
    </nav>
 
-   <nav>
-    <li><a href="#">Current</a></li>
-    <li><a href="#">Hourly</a></li>
-    <li><a href="#">Weekly</a></li>
-   </nav>
+   <div id="forecast-btns" class="removed">
+     <button id="forecast-current">Current</button>
+     <button id="forecast-hourly">Hourly</button>
+     <button id="forecast-daily">Daily</button>
+   </div>
 
    <br />
    <form id="search-form" action="http://localhost:3000/api/v1/forecast" method="get">
@@ -29,37 +31,14 @@
      <button type="submit" name="button">Submit</button>
    </form>
    <section id="weather" class="weather">
-     <section class="forecast current">
-       <div class="current-weather">
-         <div>
-           <p class="info-main">Denver, CO Weather</p>
-           <p class="info-sub">March 11, 2019</p>
-
-           <p class="info-sub">53</p>
-           <p class="info-sub">Feels like 53</p>
-           <p class="info-sub">Hi 53F Lo 30F</p>
-         </div>
-
-         <div>
-           <p class="info-sub">30% chance of Rain Showers</p>
-         </div>
-       </div>
-
-       <div class="current-details">
-         <p>Windchill 0</p>
-         <p>Windchill 0</p>
-         <p>Windchill 0</p>
-         <p>Windchill 0</p>
-         <p>Windchill 0</p>
-       </div>
-
-       <div class="current-summaries">
-         <p class="today">Mostly cloudy</p>
-         <p class="tonight">Some Rain</p>
-       </div>
-     </section>
+     <div id="forecast-update" class="removed">
+       <button id="weather-update" class="forecast-buttons">Update Weather</button>
+       <button id="weather-new" class="forecast-buttons">New Search</button>
+     </div>
    </section>
-
+   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
    <script src="scripts/weatherSearch.js"></script>
   </body>
 </html>
