@@ -12,6 +12,7 @@ const weatherNewBtn = document.getElementById('weather-new');
 const forecastCurrentBtn = document.getElementById('forecast-current');
 const forecastHourlyBtn = document.getElementById('forecast-hourly');
 const forecastDailyBtn = document.getElementById('forecast-daily');
+const cityInput = document.getElementById('city');
 
 const states = [
   {
@@ -226,7 +227,11 @@ function saveWeather(forecast) {
   sessionStorage.setItem('daily', forecast.makeDaily());
   sessionStorage.setItem('location', forecast.location);
 }
-
+function showForecast() {
+  searchForm.classList.add('removed');
+  updateForecastDOM('current');
+  addEventListeners();
+}
 function fetchWeather(url, locationParam) {
   return new Promise((resolve, reject) => {
     fetch(`${url}?location=${locationParam}`)
@@ -239,6 +244,15 @@ function fetchWeather(url, locationParam) {
       reject(error);
     });
   });
+}
+
+function newWeatherForecast(location) {
+  fetchWeather("http://localhost:3000/api/v1/forecast", location)
+    .then(weather => {
+      forecast = new Forecast(location, weather.data.attributes);
+      saveWeather(forecast);
+      showForecast();
+    });
 }
 
 function populateStates() {
@@ -265,18 +279,20 @@ function updateForecastDOM(type) {
   forecastUpdateBtns.classList.remove('removed');
 }
 
+function newWeatherSearch() {
+  sessionStorage.clear();
+  weatherSection.removeChild(document.getElementById('active-forecast'));
+  searchForm.classList.remove('removed');
+  forecastBtns.classList.add('removed');
+  forecastUpdateBtns.classList.add('removed');
+}
+
 function addEventListeners(forecast=null) {
   forecastCurrentBtn.addEventListener('click', updateForecastDOM.bind(null, "current"));
   forecastHourlyBtn.addEventListener('click', updateForecastDOM.bind(null, "hourly"));
   forecastDailyBtn.addEventListener('click', updateForecastDOM.bind(null, "daily"));
-  weatherUpdateBtn.addEventListener('click', function() {
-    if (forecast) {
-      forecast.updateSelf.apply(forecast);
-      saveWeather(forecast)
-    } else {
-      fetchWeather('http://localhost:3000/api/v1/forecast', sessionStorage.getItem('location'));
-    }
-  });
+  weatherUpdateBtn.addEventListener('click', newWeatherForecast.bind(null, sessionStorage.getItem('location')));
+  weatherNewBtn.addEventListener('click', newWeatherSearch);
 }
 
 class Forecast {
@@ -495,30 +511,19 @@ class Forecast {
     return this.makeCarousel(hourlyForecast + '</div>');
   }
  }
-
-
-let forecast = new Forecast("Denver, CO", weatherData);
+let formData;
 
 searchForm.addEventListener('submit', function(e) {
   e.preventDefault();
-
-  const formData = new FormData(this);
+  formData = new FormData(this);
   const location = `${formData.get("city")}, ${formData.get("state")}`;
-  fetchWeather(e.target.action, location)
-    .then(weather => {
-       forecast = new Forecast(location, weather.data.attributes);
-       this.classList.add('removed');
-       saveWeather(forecast);
-       updateForecastDOM('current');
-       addEventListeners();
-    });
+  cityInput.value = "";
+  newWeatherForecast(location);
 });
 
 window.addEventListener('load', function() {
   populateStates();
-  if (sessionStorage.getItem('currentWeather')) {
-    searchForm.classList.add('removed');
-    updateForecastDOM('current');
-    addEventListeners();
+  if (sessionStorage.getItem('current')) {
+    showForecast();
   }
 });
