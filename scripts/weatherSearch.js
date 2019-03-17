@@ -5,6 +5,13 @@ const weatherData = {"currently":{"summary":"Clear","icon":"clear-day","precipPr
 const searchForm = document.getElementById('search-form');
 const stateSelect = document.getElementById('state-select');
 const weatherSection = document.getElementById('weather');
+const forecastBtns = document.getElementById('forecast-btns')
+const forecastUpdateBtns = document.getElementById('forecast-update');
+const weatherUpdateBtn = document.getElementById('weather-update');
+const weatherNewBtn = document.getElementById('weather-new');
+const forecastCurrentBtn = document.getElementById('forecast-current');
+const forecastHourlyBtn = document.getElementById('forecast-hourly');
+const forecastDailyBtn = document.getElementById('forecast-daily');
 
 const states = [
   {
@@ -213,6 +220,53 @@ const states = [
   }
 ];
 
+function saveWeather(forecast) {
+  sessionStorage.setItem('currentWeather', forecast.makeCurrent());
+  sessionStorage.setItem('hourlyWeather', forecast.makeHourly());
+  sessionStorage.setItem('dailyWeather', forecast.makeDaily());
+}
+
+function addEventListeners(forecast) {
+  forecastCurrentBtn.addEventListener('click', forecast.updateDOM.bind(forecast, "current"));
+  forecastHourlyBtn.addEventListener('click', forecast.updateDOM.bind(forecast, "hourly"));
+  forecastDailyBtn.addEventListener('click', forecast.updateDOM.bind(forecast, "daily"));
+  weatherUpdateBtn.addEventListener('click', function() {
+    forecast.updateSelf.apply(forecast);
+    saveWeather(forecast)
+  });
+}
+
+function populateStates() {
+  states.forEach((state) => {
+    let selected = state.abbr === "CO" ? true : false;
+    stateSelect.options[stateSelect.options.length] = new Option(
+      state.name,
+      state.abbr,
+      selected,
+      selected
+    );
+  });
+}
+
+updateDOM(type) {
+  const div = document.createElement('div');
+  if (document.getElementById('active-forecast')) {
+    weatherSection.removeChild(document.getElementById('active-forecast'));
+  }
+  if (type === "current") {
+    div.innerHTML = this.makeCurrent();
+  }
+  if (type === "hourly") {
+    div.innerHTML = this.makeHourly();
+  }
+  if (type === "daily") {
+    div.innerHTML = this.makeDaily();
+  }
+  div.setAttribute('id', 'active-forecast');
+  weatherSection.appendChild(div);
+  forecastBtns.classList.remove('removed');
+  forecastUpdateBtns.classList.remove('removed');
+}
 
 class Forecast {
   constructor(location, attributes) {
@@ -230,6 +284,33 @@ class Forecast {
     this.day = day;
     this.time = time;
     this.date = date;
+  }
+
+  updateAttributes(attributes) {
+    this.current = {
+      weather: attributes.currently,
+      todaySummary: attributes.today_summary,
+      tonightSummary: attributes.tonight_summary,
+      todayHigh: attributes.today_high,
+      todayLow: attributes.today_low
+    };
+    this.hourly = attributes.hourly_forecast;
+    this.daily = attributes.daily_forecast;
+    const { day, time, date } = this.getDateTime(this.current.weather.time);
+    this.day = day;
+    this.time = time;
+    this.date = date;
+  }
+
+  updateSelf() {
+    fetch(`http://localhost:3000/api/v1/forecast?location=${this.location}`)
+    .then(response => {
+      return response.json();
+    }).then(data => {
+      this.updateAttributes(data.data.attributes)
+    }).catch(error => {
+      console.error(error);
+    });
   }
 
   getDateTime(timestamp) {
@@ -256,7 +337,7 @@ class Forecast {
 
   makeCarousel(weather) {
     return `
-    <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+    <div id="carouselExampleControls" class="carousel slide" date-interval="5000" data-ride="carousel">
       <div class="carousel-inner">
         ${weather}
       </div>
@@ -368,41 +449,71 @@ class Forecast {
   }
 
   makeHourly() {
-    
+    let count = 0;
+    const hourlyForecast = this.hourly.reduce((forecast, hourlyWeather, index) => {
+      const { day, time, date } = this.getDateTime(hourlyWeather.time);
+      const hourlyHTML = `
+          <div class="hourly forecast">
+            <p><span class="weather-main">${time}</span> ${day.split(" ")[0]}</p>
+            <div class="weather-icon hourly">
+              <div>
+                <p class="weather-main">${hourlyWeather.temperature}</p>
+                <p class="weather-details">Feels like ${hourlyWeather.apparentTemperature}</p>
+              </div>
+              ${this.getIcon(hourlyWeather.summary)}
+            </div>
+            <p>${hourlyWeather.summary}</p>
+            <div class="weather-desc">
+              <p>Humidity: ${hourlyWeather.humidity}</p>
+              <p>Precipitation Probability: ${hourlyWeather.precipProbability}</p>
+              <p>Visibility: ${hourlyWeather.precipProbability}</p>
+            </div>
+          </div>
+      `;
+      if (count === 0) {
+        forecast += `<div class="carousel-item ${index === 0 ? 'active' : ''}"><div class="forecast">`;
+      }
+      forecast += hourlyHTML;
+      if (count === 3) {
+        forecast += `</div></div>`;
+      }
+      count++;
+      if (count > 3) { count = 0; }
+      return forecast
+    }, "");
+    return this.makeCarousel(hourlyForecast + '</div>');
   }
  }
 
 
 const forecast = new Forecast("Denver, CO", weatherData);
-//
-// searchForm.addEventListener('submit', function(e) {
-//   e.preventDefault();
-//
-//   const formData = new FormData(this);
-//   const location = `${formData.get("city")}, ${formData.get("state")}`;
-//   fetch(`${e.target.action}?location=${location}`)
-//   .then(response => {
-//     return response.json();
-//   }).then(data => {
-//     forecast = new Forecast(location, data.data.attributes);
-//     weatherData = data.data.attributes;
-//     this.classList.add('removed');
-//     const div = document.createElement('div');
-//     div.innerHTML = forecast.makeCurrent();
-//     weatherSection.appendChild(div);
-//   }).catch(error => {
-//     console.error(error);
-//   });
-// });
+
+
+
+searchForm.addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  const formData = new FormData(this);
+  const location = `${formData.get("city")}, ${formData.get("state")}`;
+  fetch(`${e.target.action}?location=${location}`)
+  .then(response => {
+    return response.json();
+  }).then(data => {
+    // const forecast = new Forecast(location, data.data.attributes);
+    this.classList.add('removed');
+    saveWeather(forecast);
+    forecast.updateDOM('current');
+    addEventListeners(forecast);
+  }).catch(error => {
+    console.error(error);
+  });
+});
 
 window.addEventListener('load', function() {
-  states.forEach((state) => {
-    let selected = state.abbr === "CO" ? true : false;
-    stateSelect.options[stateSelect.options.length] = new Option(
-      state.name,
-      state.abbr,
-      selected,
-      selected
-    );
-  });
+  populateStates();
+  if (sessionStorage.getItem('currentWeather')) {
+    this.classList.add('removed');
+    forecast.updateDOM('current');
+    addEventListeners(forecast);
+  }
 });
